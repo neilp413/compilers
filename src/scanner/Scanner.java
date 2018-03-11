@@ -85,7 +85,7 @@ public class Scanner
      * 
      * @param: the
      *             expected char that is being checked
-     * @throws ScanerrorException
+     * @throws ScanErrorException
      *             if the chars don't match
      */
     private void eat(char expected) throws ScanErrorException
@@ -255,6 +255,12 @@ public class Scanner
         }
     }
     
+    /**
+     * It scans the in block comment until it reaches the end of the block
+     * with the (* *) format
+     * 
+     * @throws ScanErrorException   when the lexeme is not recognized
+     */
     public void scanParanthesisComment() throws ScanErrorException
     {
         boolean isAtEnd = false;
@@ -282,6 +288,14 @@ public class Scanner
         }
     }
     
+    /**
+     * scans double operands
+     * 
+     * @precondition: expecting currentChar to be a double operand
+     * 
+     * @return the string for the chars
+     * @throws ScanErrorException
+     */
     public String scanDoubleOperand() throws ScanErrorException
     {
         if(currentChar == '<')
@@ -385,7 +399,9 @@ public class Scanner
     {
         FileInputStream inStream;
         //         inStream = new FileInputStream(new File("ScannerTest.txt"));
-        inStream = new FileInputStream(new File("/Users/neilpatel/Documents/Projects/compilers/Scanner Lab/scannerTestAdvanced.txt"));
+        inStream = new FileInputStream(new File(
+                "/Users/neilpatel/Documents/Projects/compilers/Scanner Lab/scannerTestAdvanced.txt"
+                ));
         Scanner scanner = new Scanner(inStream);
         while (scanner.hasNext())
         {

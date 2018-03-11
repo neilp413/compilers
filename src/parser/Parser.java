@@ -5,13 +5,27 @@ import java.util.*;
 import scanner.ScanErrorException;
 import scanner.Scanner;
 
+/**
+ * Parses throw tokens using a specific grammar
+ * 
+ * 
+ * 
+ * @author Neil Patel
+ * @version March 8, 2018
+ */
 public class Parser
 {
     private Scanner scan;
     private String currentToken;
     private Map<String, Integer> vars;
-   // private Map<String, Boolean> vars;
-    
+    // private Map<String, Boolean> vars;
+
+    /**
+     * Constructor for the parser class
+     * 
+     * @param s the scanner to get the current token
+     * @throws ScanErrorException when the char isn't recognized 
+     */
     public Parser(Scanner s) throws ScanErrorException
     {
         vars = new HashMap<String, Integer>();
@@ -19,9 +33,16 @@ public class Parser
         currentToken = scan.nextToken();
     } 
 
-    
-    //TODO: ADD SUPPORT FOR <= and := to scanner
-    
+    /**
+     * Eats the current token and advances to the next one
+     * 
+     * @param expected the expected token
+     * 
+     * @throws  ScanErrorException  throws an exception if the expected
+     *                              token and current token do not match
+     * @throws IllegalArgumentException throws if expected doesnt match
+     *                           
+     */
     private void eat(String expected) throws IllegalArgumentException, ScanErrorException
     {
         if(currentToken.equals(expected))
@@ -33,12 +54,23 @@ public class Parser
         }
     }
 
-    /*
-     * TODO: FINISH COMMENT FOR gENERAL METHOD
+    /**
+     * Checks to see if the token is done
      * 
-     * precondition: current token is an integer
-     * postcondition: number token has been eaten
-     * @return the value of the parse integer
+     * @return  true if has next 
+     */
+    public boolean hasNext()
+    {
+        return !(currentToken.equals(".") || currentToken.equals("END"));
+    }
+
+    /**
+     * Parses the current number and returns it
+     * 
+     * @return the number(int) that is parsed
+     * 
+     * @throws ScanErrorException if the current and 
+     *                            expected do not match
      */
     private int parseNumber() throws ScanErrorException
     {
@@ -47,6 +79,14 @@ public class Parser
         return num;
     }
 
+
+    /**
+     * Parses the WRITELN statement to prints a number
+     * or can be used to parse a begin-end block
+     * 
+     * @throws ScanErrorException if the current and 
+     *                            expected do not match
+     */
     public void parseStatement() throws ScanErrorException
     {
         if(currentToken.equals("WRITELN"))
@@ -76,6 +116,14 @@ public class Parser
         eat(";");
     }
 
+    /**
+     * Parses a factor and returns it
+     * 
+     * @return the factor after it has been parsed
+     * 
+     * @throws ScanErrorException if the current and 
+     *                            expected do not match
+     */
     public int parseFactor() throws ScanErrorException
     {
         if(currentToken.equals("("))
@@ -100,6 +148,14 @@ public class Parser
         }
     }
 
+    /**
+     * Parses and returns a number or expression representing the term
+     * 
+     * @return an integer representing the term parsed
+     * 
+     * @throws ScanErrorException if the current and 
+     *                            expected do not match
+     */
     public int parseTerm() throws ScanErrorException
     {
         int val = parseFactor();
@@ -124,6 +180,14 @@ public class Parser
         return val;
     }
 
+    /**
+     * Parses and returns the equivalent number to the expression
+     * 
+     * @return  the integer representing the expression 
+     * 
+     * @throws ScanErrorException if the token is not recognized by the
+     *                            eat method this exception will be thrown
+     */
     public int parseExpression() throws ScanErrorException
     {
         int val = parseTerm();
@@ -142,12 +206,27 @@ public class Parser
         }
         return val;
     }
-    public static void main(String[] args) throws Exception
+
+    /**
+     * The main method for executing the program for testing
+     * 
+     * @param   args    The arguments for main
+     * 
+     * @throws  ScanErrorException   can throw a scan error exception if 
+     *                               the lexeme is not recognized
+     *                               
+     * @throws  FileNotFoundException   throws this if file directory is 
+     *                                  incorrect or unable to be found 
+     */
+    public static void main(String[] args) throws ScanErrorException, FileNotFoundException
     {
         FileInputStream inStream;
-        inStream = new FileInputStream(new File("test/parser/parserTest4.txt"));
+        inStream = new FileInputStream(new File("test/parser/parserTest3.txt"));
         Scanner scanner = new Scanner(inStream);
         Parser parser = new Parser(scanner);
-        parser.parseStatement();
+        while(parser.hasNext()) 
+        {
+            parser.parseStatement();
+        }
     }
 }

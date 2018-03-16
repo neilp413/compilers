@@ -294,7 +294,7 @@ public class Scanner
      * @precondition: expecting currentChar to be a double operand
      * 
      * @return the string for the chars
-     * @throws ScanErrorException
+     * @throws ScanErrorException throws if not double opperand
      */
     public String scanDoubleOperand() throws ScanErrorException
     {

@@ -17,9 +17,10 @@ public class Block extends Statement
         return stmts;
     }
 
-    @Override
     public void exec(Environment env)
     {
-        
+        Iterator<Statement> it = stmts.iterator();
+        while(it.hasNext())
+            it.next().exec(env);
     }
 }

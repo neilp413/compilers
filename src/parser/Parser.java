@@ -12,6 +12,7 @@ import ast.Number;
 import ast.Statement;
 import ast.Variable;
 import ast.Writeln;
+import environment.Environment;
 
 /**
  * Parses throw tokens using a specific grammar
@@ -257,12 +258,13 @@ public class Parser
     public static void main(String[] args) throws ScanErrorException, FileNotFoundException
     {
         FileInputStream inStream;
-        inStream = new FileInputStream(new File("test/parser/parserTest3.txt"));
+        inStream = new FileInputStream(new File("test/parser/parserTest4.txt"));
         Scanner scanner = new Scanner(inStream);
         Parser parser = new Parser(scanner);
+        Environment env = new Environment();
         while(parser.hasNext())
         {
-            parser.parseStatement();
+            parser.parseStatement().exec(env);
         }
     }
 }

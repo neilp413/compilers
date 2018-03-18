@@ -25,7 +25,7 @@ public class Assignment extends Statement
     
     public void exec(Environment env)
     {
-        
+        env.setVariable(var, exp.eval(env));
     }
     
 }

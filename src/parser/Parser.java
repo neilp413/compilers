@@ -7,7 +7,9 @@ import scanner.Scanner;
 import ast.Assignment;
 import ast.BinOp;
 import ast.Block;
+import ast.Condition;
 import ast.Expression;
+import ast.If;
 import ast.Number;
 import ast.Statement;
 import ast.Variable;
@@ -104,7 +106,6 @@ public class Parser
      */
     public Statement parseStatement() throws ScanErrorException
     {
-        Statement stmt;
         if(currentToken.equals("WRITELN"))
         {
             eat("WRITELN");
@@ -112,7 +113,8 @@ public class Parser
             Expression val = parseExpression();
             eat(")");
 //            System.out.println(val);
-            stmt = new Writeln(val);
+            eat(";");
+            return new Writeln(val);
         }
         else if(currentToken.equals("BEGIN"))
         {
@@ -123,18 +125,34 @@ public class Parser
                 stmts.add(parseStatement());
             }
             eat("END");
-            stmt = new Block(stmts);
+            eat(";");
+            return new Block(stmts);
+        }
+        else if(currentToken.equals("IF"))
+        {
+            eat("IF");
+            Condition cond = parseCondition();
+            eat("THEN");
+            Statement stmt = parseStatement();
+            if(currentToken.equals("ELSE"))
+            {
+                eat("ELSE");
+                return new If(cond, stmt, parseStatement());
+            }
+            return new If(cond,stmt);
+            
         }
         else
         {
             String id = currentToken;
             eat(currentToken);
             eat(":=");
-            stmt = new Assignment(id, parseExpression());
+            Statement stmt = new Assignment(id, parseExpression());
+            eat(";");
+            return stmt;
+            
 //            vars.put(id, parseExpression());
         }
-        eat(";");
-        return stmt;
     }
 
     /**
@@ -243,6 +261,15 @@ public class Parser
         }
         return exp;
     }
+    
+    public Condition parseCondition() throws ScanErrorException
+    {
+        Expression exp1 = parseExpression();
+        String op = currentToken;
+        eat(op);
+        Expression exp2 = parseExpression();
+        return new Condition(op, exp1, exp2);
+    }
 
     /**
      * The main method for executing the program for testing
@@ -258,7 +285,7 @@ public class Parser
     public static void main(String[] args) throws ScanErrorException, FileNotFoundException
     {
         FileInputStream inStream;
-        inStream = new FileInputStream(new File("test/parser/parserTest4.txt"));
+        inStream = new FileInputStream(new File("test/parser/parserTest5.txt"));
         Scanner scanner = new Scanner(inStream);
         Parser parser = new Parser(scanner);
         Environment env = new Environment();

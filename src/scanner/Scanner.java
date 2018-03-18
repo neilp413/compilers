@@ -306,6 +306,11 @@ public class Scanner
                 eat('=');
                 return "<=";
             }
+            else if(hasNext() && currentChar == '>')
+            {
+                eat('>');
+                return "<>";
+            }
             return "<";
         }
         else if(currentChar == '>')

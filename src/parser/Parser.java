@@ -67,6 +67,9 @@ public class Parser
     /**
      * Parses the current number and returns it
      * 
+     * @precondition: currentToken is a integer
+     * @postcondition: currentToken is now parsed 
+     * 
      * @return the number(int) that is parsed
      * 
      * @throws ScanErrorException if the current and 
@@ -83,6 +86,9 @@ public class Parser
     /**
      * Parses the WRITELN statement to prints a number
      * or can be used to parse a begin-end block
+     * 
+     * @precondition: currentToken is a statement
+     * @postcondition: the statement is parsed
      * 
      * @throws ScanErrorException if the current and 
      *                            expected do not match
@@ -119,6 +125,9 @@ public class Parser
     /**
      * Parses a factor and returns it
      * 
+     * @precondition: currentToken is a factor
+     * @postcondition: the factor is parsed
+     * 
      * @return the factor after it has been parsed
      * 
      * @throws ScanErrorException if the current and 
@@ -151,6 +160,9 @@ public class Parser
     /**
      * Parses and returns a number or expression representing the term
      * 
+     * @precondition: currentToken is a term
+     * @postcondition: term is parsed
+     * 
      * @return an integer representing the term parsed
      * 
      * @throws ScanErrorException if the current and 
@@ -182,6 +194,9 @@ public class Parser
 
     /**
      * Parses and returns the equivalent number to the expression
+     * 
+     * @precondition: currentToken is an expression
+     * @postcondition: the expression is parsed
      * 
      * @return  the integer representing the expression 
      * 
@@ -224,7 +239,7 @@ public class Parser
         inStream = new FileInputStream(new File("test/parser/parserTest3.txt"));
         Scanner scanner = new Scanner(inStream);
         Parser parser = new Parser(scanner);
-        while(parser.hasNext()) 
+        while(parser.hasNext())
         {
             parser.parseStatement();
         }

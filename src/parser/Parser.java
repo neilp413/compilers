@@ -2,18 +2,23 @@ package parser;
 
 import java.io.*;
 import java.util.*;
+
 import scanner.ScanErrorException;
 import scanner.Scanner;
+
 import ast.Assignment;
 import ast.BinOp;
 import ast.Block;
 import ast.Condition;
 import ast.Expression;
+import ast.For;
 import ast.If;
 import ast.Number;
 import ast.Statement;
 import ast.Variable;
+import ast.While;
 import ast.Writeln;
+
 import environment.Environment;
 
 /**
@@ -112,7 +117,6 @@ public class Parser
             eat("(");
             Expression val = parseExpression();
             eat(")");
-//            System.out.println(val);
             eat(";");
             return new Writeln(val);
         }
@@ -142,6 +146,27 @@ public class Parser
             return new If(cond,stmt);
             
         }
+        else if(currentToken.equals("WHILE"))
+        {
+            eat("WHILE");
+            Condition cond = parseCondition();
+            eat("DO");
+            return new While(cond, parseStatement());
+        }
+        else if(currentToken.equals("FOR"))
+        {
+            eat("FOR");
+            //TODO: think about line below
+            //CANT DO THIS BC ASSINGMENT ASSUMES SEMICOLON AND NOT SAFE
+            String id = currentToken;
+            eat(id);
+            eat(":=");
+            Assignment assig = new Assignment(id, parseExpression());
+            eat("TO");
+            Number num = parseNumber();
+            eat("DO");
+            return new For(assig, num, parseStatement());
+        }
         else
         {
             String id = currentToken;
@@ -150,8 +175,6 @@ public class Parser
             Statement stmt = new Assignment(id, parseExpression());
             eat(";");
             return stmt;
-            
-//            vars.put(id, parseExpression());
         }
     }
 
@@ -179,14 +202,12 @@ public class Parser
         {
             eat("-");
             return new BinOp("*", new Number(-1), parseFactor());
-//            return -1 * parseFactor();
         }
         else if(currentToken.chars().allMatch(Character::isDigit))
             return parseNumber();
         else
         {
             Expression exp = new Variable(currentToken);
-//            int exp = vars.get(currentToken);
             eat(currentToken);
             return exp;
         }
@@ -212,19 +233,16 @@ public class Parser
             {
                 eat("*");
                 exp = new BinOp("*", exp, parseFactor());
-//               exp *= parseFactor();
             }
             else if(currentToken.equals("/"))
             {
                 eat("/");
                 exp = new BinOp("/", exp, parseFactor());
-//                exp /= parseFactor();
             }
             else if(currentToken.equals("mod"))
             {
                 eat("mod");
                 exp = new BinOp("%", exp, parseFactor());
-//                exp %= parseFactor();
             }
         }
         return exp;
@@ -250,13 +268,11 @@ public class Parser
             {
                 eat("+");
                 exp = new BinOp("+", exp, parseTerm());
-//                exp += parseTerm();
             }
             else if(currentToken.equals("-"))
             {
                 eat("-");
                 exp = new BinOp("-", exp, parseTerm());
-//                exp -= parseTerm();
             }          
         }
         return exp;
@@ -285,7 +301,7 @@ public class Parser
     public static void main(String[] args) throws ScanErrorException, FileNotFoundException
     {
         FileInputStream inStream;
-        inStream = new FileInputStream(new File("test/parser/parserTest5.txt"));
+        inStream = new FileInputStream(new File("test/parser/parserTest6.txt"));
         Scanner scanner = new Scanner(inStream);
         Parser parser = new Parser(scanner);
         Environment env = new Environment();

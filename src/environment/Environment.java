@@ -30,12 +30,4 @@ public class Environment
             throw new IllegalArgumentException("Invalid Variable: " + variable);
     }
 
-
-    public static void main(String[] args)
-    {
-        Environment e = new Environment();
-        e.setVariable("test", 999);
-        System.out.println(e.getVariable("s"));
-
-    }
 }

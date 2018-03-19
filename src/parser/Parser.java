@@ -33,7 +33,7 @@ public class Parser
 {
     private Scanner scan;
     private String currentToken;
-    private Map<String, Integer> vars;
+    // ßprivate Map<String, Integer> vars;
     // private Map<String, Boolean> vars;
 
     /**
@@ -44,7 +44,7 @@ public class Parser
      */
     public Parser(Scanner s) throws ScanErrorException
     {
-        vars = new HashMap<String, Integer>();
+      //  vars = new HashMap<String, Integer>();
         scan = s;
         currentToken = scan.nextToken();
     } 
@@ -159,8 +159,10 @@ public class Parser
             //TODO: think about line below
             //CANT DO THIS BC ASSINGMENT ASSUMES SEMICOLON AND NOT SAFE
             String id = currentToken;
-            eat(id);
+//            System.out.println("PARSE STATEMENT FOR " + id);
+            eat(currentToken);
             eat(":=");
+//            System.out.print("test");
             Assignment assig = new Assignment(id, parseExpression());
             eat("TO");
             Number num = parseNumber();
@@ -301,7 +303,7 @@ public class Parser
     public static void main(String[] args) throws ScanErrorException, FileNotFoundException
     {
         FileInputStream inStream;
-        inStream = new FileInputStream(new File("test/parser/parserTest6.txt"));
+        inStream = new FileInputStream(new File("test/parser/parserTest7.txt"));
         Scanner scanner = new Scanner(inStream);
         Parser parser = new Parser(scanner);
         Environment env = new Environment();

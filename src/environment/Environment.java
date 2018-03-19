@@ -17,6 +17,7 @@ public class Environment
 
     public void setVariable(String variable, int value)
     {
+//        System.out.println("set variable env " + variable + value);
         Variable var = new Variable(variable);
         vars.put(variable, var);
         varVals.put(var, value);
@@ -24,6 +25,7 @@ public class Environment
 
     public int getVariable(String variable)
     {
+//       ß System.out.println("get variable env " + variable);
         if (vars.containsKey(variable))
             return varVals.get(vars.get(variable));
         else

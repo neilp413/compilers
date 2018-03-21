@@ -23,7 +23,7 @@ public class ScanErrorException extends Exception
     /**
      * Constructor for ScanErrorObjects that includes a reason for the error
      * 
-     * @param reason
+     * @param reason  the reason
      */
     public ScanErrorException(String reason)
     {

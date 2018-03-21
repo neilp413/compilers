@@ -22,19 +22,17 @@ import ast.Writeln;
 import environment.Environment;
 
 /**
- * Parses throw tokens using a specific grammar
+ * Parses through tokens using the specific grammar created in the lab
  * 
  * 
  * 
  * @author Neil Patel
- * @version March 8, 2018
+ * @version March 19, 2018
  */
 public class Parser
 {
     private Scanner scan;
     private String currentToken;
-    // ßprivate Map<String, Integer> vars;
-    // private Map<String, Boolean> vars;
 
     /**
      * Constructor for the parser class
@@ -44,7 +42,6 @@ public class Parser
      */
     public Parser(Scanner s) throws ScanErrorException
     {
-      //  vars = new HashMap<String, Integer>();
         scan = s;
         currentToken = scan.nextToken();
     } 
@@ -86,7 +83,7 @@ public class Parser
      * @precondition: currentToken is a integer
      * @postcondition: currentToken is now parsed 
      * 
-     * @return the number(int) that is parsed
+     * @return the number object that is parsed
      * 
      * @throws ScanErrorException if the current and 
      *                            expected do not match
@@ -105,6 +102,8 @@ public class Parser
      * 
      * @precondition: currentToken is a statement
      * @postcondition: the statement is parsed
+     * 
+     * @return the statement that needs to executed
      * 
      * @throws ScanErrorException if the current and 
      *                            expected do not match
@@ -156,13 +155,9 @@ public class Parser
         else if(currentToken.equals("FOR"))
         {
             eat("FOR");
-            //TODO: think about line below
-            //CANT DO THIS BC ASSINGMENT ASSUMES SEMICOLON AND NOT SAFE
             String id = currentToken;
-//            System.out.println("PARSE STATEMENT FOR " + id);
             eat(currentToken);
             eat(":=");
-//            System.out.print("test");
             Assignment assig = new Assignment(id, parseExpression());
             eat("TO");
             Number num = parseNumber();
@@ -186,7 +181,7 @@ public class Parser
      * @precondition: currentToken is a factor
      * @postcondition: the factor is parsed
      * 
-     * @return the factor after it has been parsed
+     * @return the expression after it has been parsed
      * 
      * @throws ScanErrorException if the current and 
      *                            expected do not match
@@ -221,7 +216,7 @@ public class Parser
      * @precondition: currentToken is a term
      * @postcondition: term is parsed
      * 
-     * @return an integer representing the term parsed
+     * @return the expression representing the term parsed
      * 
      * @throws ScanErrorException if the current and 
      *                            expected do not match
@@ -256,7 +251,7 @@ public class Parser
      * @precondition: currentToken is an expression
      * @postcondition: the expression is parsed
      * 
-     * @return  the integer representing the expression 
+     * @return  the expression based on the language
      * 
      * @throws ScanErrorException if the token is not recognized by the
      *                            eat method this exception will be thrown
@@ -280,6 +275,16 @@ public class Parser
         return exp;
     }
     
+    /**
+     * Parses and returns the correct condition object
+     * 
+     * @precondition: currentToken is a condition
+     * @postcondition: the condition is parsed
+     * 
+     * @return  the condition object created
+     * @throws ScanErrorException if the token is not recognized by the
+     *                            eat method this exception will be thrown
+     */
     public Condition parseCondition() throws ScanErrorException
     {
         Expression exp1 = parseExpression();
@@ -303,7 +308,7 @@ public class Parser
     public static void main(String[] args) throws ScanErrorException, FileNotFoundException
     {
         FileInputStream inStream;
-        inStream = new FileInputStream(new File("test/parser/parserTest7.txt"));
+        inStream = new FileInputStream(new File("test/parser/parserTest5.txt"));
         Scanner scanner = new Scanner(inStream);
         Parser parser = new Parser(scanner);
         Environment env = new Environment();

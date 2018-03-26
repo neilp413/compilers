@@ -308,7 +308,7 @@ public class Parser
     public static void main(String[] args) throws ScanErrorException, FileNotFoundException
     {
         FileInputStream inStream;
-        inStream = new FileInputStream(new File("test/parser/parserTest5.txt"));
+        inStream = new FileInputStream(new File("test/parser/parserTest6.txt"));
         Scanner scanner = new Scanner(inStream);
         Parser parser = new Parser(scanner);
         Environment env = new Environment();

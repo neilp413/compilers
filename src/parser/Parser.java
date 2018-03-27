@@ -14,6 +14,7 @@ import ast.Expression;
 import ast.For;
 import ast.If;
 import ast.Number;
+import ast.Readln;
 import ast.Statement;
 import ast.Variable;
 import ast.While;
@@ -119,6 +120,16 @@ public class Parser
             eat(";");
             return new Writeln(val);
         }
+        else if(currentToken.equals("READLN"))
+        {
+            eat("READLN");
+            eat("(");
+            Statement stmt = new Readln(new Variable(currentToken));
+            eat(currentToken);
+            eat(")");
+            eat(";");
+            return stmt;
+        }
         else if(currentToken.equals("BEGIN"))
         {
             List<Statement> stmts = new LinkedList<Statement>();
@@ -158,7 +169,7 @@ public class Parser
             String id = currentToken;
             eat(currentToken);
             eat(":=");
-            Assignment assig = new Assignment(id, parseExpression());
+            Assignment assig = new Assignment(id, parseNumber());
             eat("TO");
             Number num = parseNumber();
             eat("DO");
@@ -308,7 +319,7 @@ public class Parser
     public static void main(String[] args) throws ScanErrorException, FileNotFoundException
     {
         FileInputStream inStream;
-        inStream = new FileInputStream(new File("test/parser/parserTest6.txt"));
+        inStream = new FileInputStream(new File("test/parser/parserTest7.txt"));
         Scanner scanner = new Scanner(inStream);
         Parser parser = new Parser(scanner);
         Environment env = new Environment();

@@ -51,5 +51,18 @@ public class Environment
         else
             throw new IllegalArgumentException("No Variable: " + variable);
     }
+    
+    /**
+     * Removes a variable from the environment
+     * 
+     * @param variable  the name of the variable that needs to be removed
+     */
+    public void removeVariable(String variable)
+    {
+        if(vars.containsKey(variable))
+            varVals.remove(vars.remove(variable));
+        else
+            throw new IllegalArgumentException("No Variable " + variable);
+    }
 
 }

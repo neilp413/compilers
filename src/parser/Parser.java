@@ -14,6 +14,9 @@ import ast.Expression;
 import ast.For;
 import ast.If;
 import ast.Number;
+import ast.ProcedureCall;
+import ast.ProcedureDeclaration;
+import ast.Program;
 import ast.Readln;
 import ast.Statement;
 import ast.Variable;
@@ -154,7 +157,7 @@ public class Parser
                 return new If(cond, stmt, parseStatement());
             }
             return new If(cond,stmt);
-            
+
         }
         else if(currentToken.equals("WHILE"))
         {
@@ -215,8 +218,15 @@ public class Parser
             return parseNumber();
         else
         {
-            Expression exp = new Variable(currentToken);
-            eat(currentToken);
+            String id = currentToken;
+            eat(id);
+            if(currentToken.equals("("))
+            {
+                eat("(");
+                eat(")");
+                return new ProcedureCall(id);
+            }
+            Expression exp = new Variable(id);
             return exp;
         }
     }
@@ -285,7 +295,7 @@ public class Parser
         }
         return exp;
     }
-    
+
     /**
      * Parses and returns the correct condition object
      * 
@@ -303,6 +313,22 @@ public class Parser
         eat(op);
         Expression exp2 = parseExpression();
         return new Condition(op, exp1, exp2);
+    }
+
+    public Program parseProgram() throws ScanErrorException
+    {
+        List<ProcedureDeclaration> procedures = new LinkedList<ProcedureDeclaration>();
+        while(currentToken.equals("PROCEDURE"))
+        {
+            eat("PROCEDURE");
+            String name = currentToken;
+            eat(name);
+            eat("(");
+            eat(")");
+            eat(";");
+            procedures.add(new ProcedureDeclaration(name, parseStatement()));   
+        }
+        return new Program(procedures, parseStatement());
     }
 
     /**

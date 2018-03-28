@@ -1,6 +1,10 @@
 package environment;
 
 import java.util.*;
+
+import ast.ProcedureCall;
+import ast.ProcedureDeclaration;
+import ast.Statement;
 import ast.Variable;
 
 /**
@@ -15,6 +19,9 @@ public class Environment
 {
     private Map<String, Variable> vars;
     private Map<Variable, Integer> varVals;
+    
+    private Map<String, ProcedureDeclaration> procedures;
+    private Map<ProcedureDeclaration, Statement> procedureStmts;
 
     /**
      * The constructor for the environment object
@@ -23,6 +30,8 @@ public class Environment
     {
         vars = new HashMap<String, Variable>();
         varVals = new HashMap<Variable, Integer>();
+        procedures = new HashMap<String, ProcedureDeclaration>();
+        procedureStmts = new HashMap<ProcedureDeclaration, Statement>();
     }
 
     /**
@@ -62,7 +71,22 @@ public class Environment
         if(vars.containsKey(variable))
             varVals.remove(vars.remove(variable));
         else
-            throw new IllegalArgumentException("No Variable " + variable);
+            throw new IllegalArgumentException("No Variable called" + variable);
+    }
+    
+    public void setProcedure(String procedure, Statement stmt)
+    {
+        ProcedureDeclaration pro = new ProcedureDeclaration(procedure, stmt);
+        procedures.put(procedure, pro);
+//        procedureStmts.put(pro, stmt);
+    }
+    
+    public Statement getProcedure(String procedure)
+    {
+        if(procedures.containsKey(procedure))
+            return procedures.get(procedures).getStatement();
+        else
+            throw new IllegalArgumentException("No Procedure called: " + procedure);
     }
 
 }

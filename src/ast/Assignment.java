@@ -13,6 +13,7 @@ public class Assignment extends Statement
 {
     private Expression exp;
     private String var;
+//    private Variable variable;
     
     /**
      * Constructor for the Assignment class
@@ -24,6 +25,7 @@ public class Assignment extends Statement
     {
         this.exp = exp;
         this.var = var;
+//        this.variable = new Variable(var);
     }
     
     /**
@@ -54,6 +56,7 @@ public class Assignment extends Statement
      */
     public void exec(Environment env)
     {
+//        Variable variable = new Variable(var);
         env.setVariable(var, exp.eval(env));
     }  
 }

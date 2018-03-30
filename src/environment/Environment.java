@@ -12,43 +12,59 @@ import ast.Variable;
  * variables being used 
  * 
  * @author Neil Patel
- * @version March 19, 2017
+ * @version March 30, 2017
  *
  */
 public class Environment
 {
-    private Map<String, Variable> vars;
-    private Map<Variable, Integer> varVals;
+    private Map<String, Integer> vars;
     
     private Map<String, ProcedureDeclaration> procedures;
-    private Map<ProcedureDeclaration, Statement> procedureStmts;
+    
+    private Environment parent;
+    private Environment global;
 
     /**
      * The constructor for the environment object
+     * 
+     * @param parent    the parent environment
      */
-    public Environment()
+    public Environment(Environment parent)
     {
-        vars = new HashMap<String, Variable>();
-        varVals = new HashMap<Variable, Integer>();
+        vars = new HashMap<String, Integer>();
         procedures = new HashMap<String, ProcedureDeclaration>();
-        procedureStmts = new HashMap<ProcedureDeclaration, Statement>();
+        this.parent = parent;
+        this.global = this.getGlobal(this);
+    }
+    
+    /**
+     * Sets and stores the value of a variable in this environment
+     * 
+     * @param variable  the name of the variable 
+     * @param value     the value of the variable
+     */
+    public void declareVariable(String variable, int value)
+    {
+        vars.put(variable, value);
     }
 
     /**
-     * Sets and stores the value of a variable to the appropriate spot in the map
+     * Puts a variable in the global environment if it isn't in the current environment
      * 
      * @param variable  the name of the variable 
      * @param value     the value of the variable
      */
     public void setVariable(String variable, int value)
     {
-        Variable var = new Variable(variable);
-        vars.put(variable, var);
-        varVals.put(var, value);
+        if(!vars.containsKey(variable))
+            global.declareVariable(variable, value);
+        else
+            this.declareVariable(variable, value);
     }
 
     /**
      * Retrieves the value of the variable based on the name of the variable
+     * and also checks if it is in the global environment
      * 
      * @param variable  the name of the variable
      * @return          the value of the variable
@@ -56,9 +72,11 @@ public class Environment
     public int getVariable(String variable)
     {
         if (vars.containsKey(variable))
-            return varVals.get(vars.get(variable));
-        else
+            return vars.get(variable);
+        else if(this.getParent() == null || this == global)
             throw new IllegalArgumentException("No Variable: " + variable);
+        else
+            return global.vars.get(variable);
     }
     
     /**
@@ -69,24 +87,58 @@ public class Environment
     public void removeVariable(String variable)
     {
         if(vars.containsKey(variable))
-            varVals.remove(vars.remove(variable));
+            vars.remove(variable);
         else
             throw new IllegalArgumentException("No Variable called" + variable);
     }
     
-    public void setProcedure(String procedure, Statement stmt)
+    /**
+     * Stores a ProcedureDeclaration in the global environment
+     * 
+     * @param procedure the name of the procedure
+     * @param pro       the ProcedureDeclaration that gets set
+     */
+    public void setProcedure(String procedure, ProcedureDeclaration pro)
     {
-        ProcedureDeclaration pro = new ProcedureDeclaration(procedure, stmt);
-        procedures.put(procedure, pro);
-//        procedureStmts.put(pro, stmt);
+        global.procedures.put(procedure, pro);
     }
     
-    public Statement getProcedure(String procedure)
+    /**
+     * Gets the correct ProcedureDeclaration from the name 
+     * 
+     * @param procedure the name of the procedure
+     * @return  the ProcedureDeclaration that has been retrieved
+     */
+    public ProcedureDeclaration getProcedure(String procedure)
     {
-        if(procedures.containsKey(procedure))
-            return procedures.get(procedures).getStatement();
+        if(global.procedures.containsKey(procedure))
+            return global.procedures.get(procedure);
         else
             throw new IllegalArgumentException("No Procedure called: " + procedure);
+    }
+    
+    /**
+     * Returns the parent environment
+     * 
+     * @return  the parent environment
+     */
+    public Environment getParent()
+    {
+        return parent;
+    }
+    
+    /**
+     * Returns the global environment
+     * 
+     * @param e the environment to get the global environment
+     * @return  the global environment
+     */
+    public Environment getGlobal(Environment e)
+    {
+        if(e.getParent() == null)
+            return e;
+        return getGlobal(e.getParent());
+            
     }
 
 }

@@ -29,9 +29,8 @@ import environment.Environment;
  * Parses through tokens using the specific grammar created in the lab
  * 
  * 
- * 
  * @author Neil Patel
- * @version March 19, 2018
+ * @version March 30, 2018
  */
 public class Parser
 {
@@ -92,7 +91,7 @@ public class Parser
      * @throws ScanErrorException if the current and 
      *                            expected do not match
      */
-    private Number parseNumber() throws ScanErrorException
+    public Number parseNumber() throws ScanErrorException
     {
         Number num = new Number(Integer.parseInt(currentToken));
         eat(currentToken);
@@ -222,9 +221,16 @@ public class Parser
             eat(id);
             if(currentToken.equals("("))
             {
+                List<Expression> params = new LinkedList<Expression>();
                 eat("(");
+                while(!currentToken.equals(")"))
+                {
+                    if(currentToken.equals(","))
+                        eat(",");
+                    params.add(parseExpression());
+                }
                 eat(")");
-                return new ProcedureCall(id);
+                return new ProcedureCall(id, params);
             }
             Expression exp = new Variable(id);
             return exp;
@@ -315,18 +321,33 @@ public class Parser
         return new Condition(op, exp1, exp2);
     }
 
+    /**
+     * Parses and returns the program object
+     * 
+     * @return  the program to be executed
+     * @throws ScanErrorException   if the token is not recognized by the
+     *                            eat method this exception will be thrown
+     */
     public Program parseProgram() throws ScanErrorException
     {
         List<ProcedureDeclaration> procedures = new LinkedList<ProcedureDeclaration>();
         while(currentToken.equals("PROCEDURE"))
         {
+            List<Variable> params = new LinkedList<Variable>();
             eat("PROCEDURE");
             String name = currentToken;
             eat(name);
             eat("(");
+            while(!currentToken.equals(")"))
+            {
+                if(currentToken.equals(","))
+                    eat(",");
+                params.add(new Variable(currentToken));
+                eat(currentToken);
+            }
             eat(")");
             eat(";");
-            procedures.add(new ProcedureDeclaration(name, parseStatement()));   
+            procedures.add(new ProcedureDeclaration(name, parseStatement(), params));   
         }
         return new Program(procedures, parseStatement());
     }
@@ -345,13 +366,10 @@ public class Parser
     public static void main(String[] args) throws ScanErrorException, FileNotFoundException
     {
         FileInputStream inStream;
-        inStream = new FileInputStream(new File("test/parser/parserTest7.txt"));
+        inStream = new FileInputStream(new File("test/parser/parserTest8.txt"));
         Scanner scanner = new Scanner(inStream);
         Parser parser = new Parser(scanner);
-        Environment env = new Environment();
-        while(parser.hasNext())
-        {
-            parser.parseStatement().exec(env);
-        }
+        Environment env = new Environment(null);
+        parser.parseProgram().exec(env);
     }
 }

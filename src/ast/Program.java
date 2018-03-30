@@ -2,6 +2,8 @@ package ast;
 
 import java.util.*;
 
+import environment.Environment;
+
 public class Program
 {
     private List<ProcedureDeclaration> procedures;
@@ -11,6 +13,14 @@ public class Program
     {
         this.procedures = procedures;
         this.stmt = stmt;
+    }
+
+    public void exec(Environment env)
+    {
+        Iterator<ProcedureDeclaration> it = procedures.iterator();
+        while(it.hasNext())
+            it.next().exec(env);
+        stmt.exec(env);
     }
     
     

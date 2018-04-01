@@ -18,9 +18,9 @@ import ast.Variable;
 public class Environment
 {
     private Map<String, Integer> vars;
-    
+
     private Map<String, ProcedureDeclaration> procedures;
-    
+
     private Environment parent;
     private Environment global;
 
@@ -36,7 +36,31 @@ public class Environment
         this.parent = parent;
         this.global = this.getGlobal(this);
     }
-    
+
+    /**
+     * Returns the parent environment
+     * 
+     * @return  the parent environment
+     */
+    public Environment getParent()
+    {
+        return parent;
+    }
+
+    /**
+     * Returns the global environment
+     * 
+     * @param e the environment to get the global environment
+     * @return  the global environment
+     */
+    public Environment getGlobal(Environment e)
+    {
+        if(e.getParent() == null)
+            return e;
+        return getGlobal(e.getParent());
+
+    }
+
     /**
      * Sets and stores the value of a variable in this environment
      * 
@@ -73,14 +97,15 @@ public class Environment
     {
         if (vars.containsKey(variable))
             return vars.get(variable);
-        else if(this.getParent() == null || this == global)
+        else if(this == global)
             throw new IllegalArgumentException("No Variable: " + variable);
         else
             return global.vars.get(variable);
     }
-    
+
     /**
-     * Removes a variable from the environment
+     * Removes a variable from the environment if not in this environment
+     * checks in the global environment
      * 
      * @param variable  the name of the variable that needs to be removed
      */
@@ -88,10 +113,12 @@ public class Environment
     {
         if(vars.containsKey(variable))
             vars.remove(variable);
-        else
+        else if(this == global)
             throw new IllegalArgumentException("No Variable called" + variable);
+        else
+            global.vars.remove(variable);
     }
-    
+
     /**
      * Stores a ProcedureDeclaration in the global environment
      * 
@@ -102,7 +129,7 @@ public class Environment
     {
         global.procedures.put(procedure, pro);
     }
-    
+
     /**
      * Gets the correct ProcedureDeclaration from the name 
      * 
@@ -116,29 +143,7 @@ public class Environment
         else
             throw new IllegalArgumentException("No Procedure called: " + procedure);
     }
-    
-    /**
-     * Returns the parent environment
-     * 
-     * @return  the parent environment
-     */
-    public Environment getParent()
-    {
-        return parent;
-    }
-    
-    /**
-     * Returns the global environment
-     * 
-     * @param e the environment to get the global environment
-     * @return  the global environment
-     */
-    public Environment getGlobal(Environment e)
-    {
-        if(e.getParent() == null)
-            return e;
-        return getGlobal(e.getParent());
-            
-    }
+
+
 
 }

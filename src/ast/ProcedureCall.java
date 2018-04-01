@@ -9,7 +9,7 @@ import environment.Environment;
  * and acts like a procedure is called when the object is evaluated
  * 
  * @author Neil Patel
- * @version March 20, 2017
+ * @version March 30, 2017
  *
  */
 public class ProcedureCall extends Expression
@@ -39,14 +39,15 @@ public class ProcedureCall extends Expression
     {
         Environment local = new Environment(env);
         ProcedureDeclaration procedure = env.getProcedure(name);
-        List<Variable> paramVars = procedure.getParameters();
         Variable temp = new Variable(procedure.getName());
-        env.setVariable(procedure.getName(), 0);
-        if(params.size() != paramVars.size())
-            throw new IllegalArgumentException("Number of parameters don't"
-                    + " match declaration parameters.");
+        List<Variable> paramVars = procedure.getParameters();
         Iterator<Expression> itVal = params.iterator();
         Iterator<Variable> itVar = paramVars.iterator();
+        
+        env.setVariable(procedure.getName(), 0);   
+        if(params.size() != paramVars.size())
+            throw new IllegalArgumentException("Number of parameters don't"
+                    + " match declaration parameters.");      
         while(itVal.hasNext() && itVar.hasNext())
         {
             local.declareVariable(itVar.next().getName(), itVal.next().eval(env));

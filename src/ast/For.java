@@ -7,7 +7,7 @@ import environment.Environment;
  *  and acts like a For loop
  * 
  * @author Neil Patel
- * @version March 26, 2017
+ * @version March 30, 2017
  *
  */
 public class For extends Statement
@@ -36,15 +36,14 @@ public class For extends Statement
      * @param env   the environment to be used
      */
     public void exec(Environment env)
-    {
-        assig.exec(env);
+    {   Environment local = new Environment(env);
+        assig.exec(local);
         String name = assig.getVar();
-        int val = env.getVariable(name);
-        while(env.getVariable(name) <= limit.eval(env))
+        while(local.getVariable(name) <= limit.eval(local))
         {
-            stmt.exec(env);
-            env.setVariable(name, env.getVariable(name) + 1);
+            stmt.exec(local);
+            local.declareVariable(name, local.getVariable(name) + 1);
         }
-        env.removeVariable(name);
+        local.removeVariable(name);
     }
 }

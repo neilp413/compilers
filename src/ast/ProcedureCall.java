@@ -44,7 +44,7 @@ public class ProcedureCall extends Expression
         Iterator<Expression> itVal = params.iterator();
         Iterator<Variable> itVar = paramVars.iterator();
         
-        env.setVariable(procedure.getName(), 0);   
+        env.setVariable(temp.getName(), 0);   
         if(params.size() != paramVars.size())
             throw new IllegalArgumentException("Number of parameters don't"
                     + " match declaration parameters.");      

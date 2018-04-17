@@ -56,7 +56,7 @@ public class Parser
      * 
      * @throws  ScanErrorException  throws an exception if the expected
      *                              token and current token do not match
-     * @throws IllegalArgumentException throws if expected doesnt match
+     * @throws IllegalArgumentException throws if expected doesn't match
      *                           
      */
     private void eat(String expected) throws IllegalArgumentException, ScanErrorException
@@ -68,16 +68,6 @@ public class Parser
             throw new ScanErrorException("Illegal Token - expected " 
                     + expected + " and found " + currentToken);
         }
-    }
-
-    /**
-     * Checks to see if the token is done
-     * 
-     * @return  true if has next 
-     */
-    public boolean hasNext()
-    {
-        return !(currentToken.equals(".") || currentToken.equals("END"));
     }
 
     /**
@@ -232,8 +222,7 @@ public class Parser
                 eat(")");
                 return new ProcedureCall(id, params);
             }
-            Expression exp = new Variable(id);
-            return exp;
+            return new Variable(id);
         }
     }
 
@@ -365,8 +354,8 @@ public class Parser
      */
     public static void main(String[] args) throws ScanErrorException, FileNotFoundException
     {
-        FileInputStream inStream;
-        inStream = new FileInputStream(new File("test/parser/parserTest8.txt"));
+        FileInputStream inStream = new FileInputStream(new File(
+                "test/parser/parserTest8.txt"));
         Scanner scanner = new Scanner(inStream);
         Parser parser = new Parser(scanner);
         Environment env = new Environment(null);

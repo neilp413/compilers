@@ -36,7 +36,8 @@ public class For extends Statement
      * @param env   the environment to be used
      */
     public void exec(Environment env)
-    {   Environment local = new Environment(env);
+    {   
+        Environment local = new Environment(env);
         assig.exec(local);
         String name = assig.getVar();
         while(local.getVariable(name) <= limit.eval(local))

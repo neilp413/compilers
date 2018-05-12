@@ -22,7 +22,7 @@ import ast.Statement;
 import ast.Variable;
 import ast.While;
 import ast.Writeln;
-
+import emitter.Emitter;
 import environment.Environment;
 
 /**
@@ -30,7 +30,7 @@ import environment.Environment;
  * 
  * 
  * @author Neil Patel
- * @version March 30, 2018
+ * @version May 2, 2018
  */
 public class Parser
 {
@@ -311,14 +311,29 @@ public class Parser
     }
 
     /**
-     * Parses and returns the program object
+     * Parses through the program files, first looking at all the declared variables
+     * and the statement that follows
      * 
      * @return  the program to be executed
      * @throws ScanErrorException   if the token is not recognized by the
      *                            eat method this exception will be thrown
      */
     public Program parseProgram() throws ScanErrorException
-    {
+    {   
+        List<String> vars = new LinkedList<String>();
+        while(currentToken.equals("VAR"))
+        {
+            eat("VAR");
+            while(!currentToken.equals(";"))
+            {
+                vars.add(currentToken);
+                eat(currentToken);
+                if(currentToken.equals(","))
+                    eat(",");
+            }
+            eat(";");
+        }
+        
         List<ProcedureDeclaration> procedures = new LinkedList<ProcedureDeclaration>();
         while(currentToken.equals("PROCEDURE"))
         {
@@ -338,7 +353,7 @@ public class Parser
             eat(";");
             procedures.add(new ProcedureDeclaration(name, parseStatement(), params));   
         }
-        return new Program(procedures, parseStatement());
+        return new Program(parseStatement(), vars);
     }
 
     /**
@@ -355,10 +370,26 @@ public class Parser
     public static void main(String[] args) throws ScanErrorException, FileNotFoundException
     {
         FileInputStream inStream = new FileInputStream(new File(
-                "test/parser/parserTest8.txt"));
+                "testers/parserTest9.txt"));
         Scanner scanner = new Scanner(inStream);
         Parser parser = new Parser(scanner);
         Environment env = new Environment(null);
-        parser.parseProgram().exec(env);
+//        parser.parseProgram().exec(env);
+        Emitter e = new Emitter("testfile.asm");
+        Program program = parser.parseProgram();
+        Iterator<String> it = program.getVars().iterator();
+        
+        e.emit(".data");
+        e.emit("newLine: .asciiz \"\\n\"");
+        
+        // Adds the "var" to beginning of each variable name, adds it to the MIPS code, and sets
+        // the value of each variable to 0
+        while(it.hasNext())
+            e.emit("var" + it.next() + ": .word 0");
+        
+        e.emit(".text");
+        e.emit(".global main");
+        e.emit("main:");
+        program.compile(e);
     }
 }

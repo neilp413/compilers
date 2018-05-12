@@ -2,11 +2,13 @@ package ast;
 
 import environment.Environment;
 
+import emitter.Emitter;
+
 /**
  * The Number class acts as an expression but stores an integer value
  * 
  * @author Neil Patel
- * @version March 19, 2018
+ * @version April 29, 2018
  */
 public class Number extends Expression
 {
@@ -23,7 +25,7 @@ public class Number extends Expression
     }
 
     /**
-     * Evaluates the Number object by returing the value of the Number Object
+     * Evaluates the Number object by returning the value of the Number Object
      * 
      * @param env the environment being used to store the variables
      * @return the value of the expression
@@ -31,5 +33,16 @@ public class Number extends Expression
     public int eval(Environment env)     
     {
         return value;
+    }
+    
+    /**
+     * Emits a line  of MIPS code that stores the value of the Number object 
+     * into the register $v0 by using the emitter
+     * 
+     * @param e     the emitter being used the create the MIPS file
+     */
+    public void compile(Emitter e)
+    {
+        e.emit("li $v0 " + value);
     }
 }

@@ -1,5 +1,6 @@
 package ast;
 
+import emitter.Emitter;
 import environment.Environment;
 
 /**
@@ -7,7 +8,7 @@ import environment.Environment;
  * takes care of the assignments of variables
  * 
  * @author Neil Patel
- * @version March 19, 2018
+ * @version May 2, 2018
  */
 public class Assignment extends Statement
 {
@@ -55,5 +56,18 @@ public class Assignment extends Statement
     public void exec(Environment env)
     {
         env.setVariable(var, exp.eval(env));
-    }  
+    }
+    
+    
+    /**
+     * Emits lines of code that will change  
+     * 
+     * @param e     the emitter being used to create readable MIPS code
+     */
+    public void compile(Emitter e)
+    {
+        exp.compile(e);
+        e.emit("la $t0, var" + var);
+        e.emit("lw $v0, ($t0)");
+    }
 }

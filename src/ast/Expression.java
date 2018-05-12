@@ -2,11 +2,13 @@ package ast;
 
 import environment.Environment;
 
+import emitter.Emitter;
+
 /**
  * Abstract class for expressions
  * 
  * @author Neil Patel
- * @version March 19, 2018
+ * @version April 29, 2018
  */
 public abstract class Expression
 {
@@ -17,4 +19,14 @@ public abstract class Expression
      * @return the value of the expression
      */
     public abstract int eval(Environment env);
+    
+    /**
+     * A method that turns the an aspect of our Pascal code into a readable MIPS file 
+     * 
+     * @param e     the emitter being used to create the MIPS file
+     */
+    public void compile(Emitter e)
+    {
+        
+    }
 }

@@ -1,12 +1,13 @@
 package ast;
 
+import emitter.Emitter;
 import environment.Environment;
 
 /**
  * The Condition class deals acts as a conditional that returns a boolean
  * 
  * @author Neil Patel
- * @version March 19, 2018
+ * @version May 2, 2018
  *
  */
 public class Condition 
@@ -106,6 +107,45 @@ public class Condition
                 return exp1.eval(env) <= exp2.eval(env);
             case GREATER_EQUAL: 
                 return exp1.eval(env) >= exp2.eval(env);
+            default:
+                throw new IllegalArgumentException("Invalid Operator " + relop);
+        }
+    }
+
+    /**
+     *  Emits the readable lines of MIP code that places the value of the first expression to 
+     *  register $t0 then places the value of the second expression into the register 
+     *  into the register $v0. Then does the correct comparison and places a label
+     * 
+     * @param e     the emitter being used to create the MIPS readable file
+     * @param label the label to jump if the condition is met
+     */
+    public void compile(Emitter e, String label)
+    {
+        exp1.compile(e);
+        e.emit("move $t1, $v0");
+        exp2.compile(e);
+
+        switch(relop)
+        {
+            case EQUAL:
+                e.emit("bne $t1, $v0, " + label);
+                break;
+            case NOT_EQUAL:
+                e.emit("beq $t1, $v0, " + label);
+                break;
+            case LESS:
+                e.emit("bge $t1, $v0, " + label);
+                break;
+            case GREATER:
+                e.emit("ble $t1, $v0, " + label);
+                break;
+            case LESS_EQUAL:
+                e.emit("bgt $t1, $v0, " + label);
+                break;
+            case GREATER_EQUAL:
+                e.emit("blt $t1, $v0, " + label);
+                break;
             default:
                 throw new IllegalArgumentException("Invalid Operator " + relop);
         }

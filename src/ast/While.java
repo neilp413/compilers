@@ -1,5 +1,6 @@
 package ast;
 
+import emitter.Emitter;
 import environment.Environment;
 
 /**
@@ -7,7 +8,7 @@ import environment.Environment;
  * and acts like a while loop
  * 
  * @author Neil Patel
- * @version March 19, 2018
+ * @version May 2, 2018
  *
  */
 public class While extends Statement
@@ -38,5 +39,24 @@ public class While extends Statement
         {
             stmt.exec(env);
         }
+    }
+    
+    /**
+     *  Emits the readable lines of MIP code that compiles the condition and uses the jumps
+     *  to create a while and compiles the statements that are in the while loop
+     * 
+     * @param e     the emitter being used to create the MIPS readable file
+     */
+    public void compile(Emitter e)
+    {
+        int labelId = e.nextLabelID();
+        String end = "endWhile" + labelId;
+        String loop = "loop" + labelId;
+        
+        e.emit(loop + ":");
+        cond.compile(e, end);
+        stmt.compile(e);
+        e.emit("j " + loop);
+        e.emit(end + ":");
     }
 }

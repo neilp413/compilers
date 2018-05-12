@@ -1,5 +1,6 @@
 package ast;
 
+import emitter.Emitter;
 import environment.Environment;
 
 /**
@@ -7,7 +8,7 @@ import environment.Environment;
  * acts like a variable
  * 
  * @author Neil Patel
- * @version March 19, 2018
+ * @version May 2, 2018
  */
 public class Variable extends Expression
 {
@@ -42,5 +43,16 @@ public class Variable extends Expression
     public int eval(Environment env)
     {
         return env.getVariable(name);
+    }
+    
+    /**
+     * Emits to readable MIPS code that stores the variable name into stack to be used for later
+     * 
+     * @param e     the emitter being used to create readable MIPS code
+     */
+    public void compile(Emitter e)
+    {
+        e.emit("la $t0, var" + name);
+        e.emit("lw $v0, ($t0)");
     }
 }

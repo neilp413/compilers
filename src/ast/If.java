@@ -1,5 +1,6 @@
 package ast;
 
+import emitter.Emitter;
 import environment.Environment;
 
 /**
@@ -7,7 +8,7 @@ import environment.Environment;
  * acts like an if block with the implementation of else
  * 
  * @author Neil Patel
- * @version March 19, 2018
+ * @version May 2, 2018
  */
 public class If extends Statement 
 {
@@ -58,6 +59,32 @@ public class If extends Statement
         {
             if(elseStmt != null)
                 elseStmt.exec(env);
+        }
+    }
+    
+    /**
+     *  Emits the readable lines of MIP code that compiles the condition and the statements 
+     *  that follow the if/if-else statement
+     * 
+     * @param e     the emitter being used to create the MIPS readable file
+     */
+    public void compile(Emitter e)
+    {
+        String end = "endIf" + e.nextLabelID();
+        
+        if(elseStmt != null)
+        {
+            cond.compile(e, end);
+            stmt.compile(e);
+            e.emit(end + ":");
+            elseStmt.compile(e);
+
+        }
+        else
+        {
+            cond.compile(e, end);
+            stmt.compile(e);
+            e.emit(end + ":");
         }
     }
 }

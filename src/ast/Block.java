@@ -1,14 +1,17 @@
 package ast;
 
 import java.util.*;
+
 import environment.Environment;
+
+import emitter.Emitter;
 
 /**
  * The Block class extends the Statement class
  * and acts like a block of code
  * 
  * @author Neil Patel
- * @version March 19, 2018
+ * @version April 30, 2018
  */
 public class Block extends Statement
 {
@@ -44,5 +47,18 @@ public class Block extends Statement
         Iterator<Statement> it = stmts.iterator();
         while(it.hasNext())
             it.next().exec(env);
+    }
+    
+    /**
+     *  Compiles all of the statements with the block which basically turns all the Pascal
+     *  code within the statement to MIPS code
+     * 
+     * @param e     the emitter that is being used to create a readable MIPS file
+     */
+    public void compile(Emitter e)
+    {
+        Iterator<Statement> it = stmts.iterator();
+        while(it.hasNext())
+            it.next().compile(e);
     }
 }

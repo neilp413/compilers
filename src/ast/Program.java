@@ -76,9 +76,25 @@ public class Program
      */
     public void compile(Emitter e)
     {
+        Iterator<String> it = vars.iterator();
+
+        
+        e.emit("#@author Neil Patel");
+        e.emit("#@version May 14, 2018");
+        e.emit(".data");
+        e.emit("newLine: .asciiz \"\\n\"");
+        
+        // Adds the "var" to beginning of each variable name, adds it to the MIPS code, and sets
+        // the value of each variable to 0
+        while(it.hasNext())
+            e.emit("var" + it.next() + ": .word 0");
+        
+        e.emit(".text");
+        e.emit(".globl main");
+        e.emit("main:");
         stmt.compile(e);
         e.emit("li $v0 10");
-        e.emit("Syscall");
+        e.emit("syscall");
     }
 
 

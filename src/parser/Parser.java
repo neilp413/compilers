@@ -377,19 +377,20 @@ public class Parser
 //        parser.parseProgram().exec(env);
         Emitter e = new Emitter("testfile.asm");
         Program program = parser.parseProgram();
-        Iterator<String> it = program.getVars().iterator();
-        
-        e.emit(".data");
-        e.emit("newLine: .asciiz \"\\n\"");
-        
-        // Adds the "var" to beginning of each variable name, adds it to the MIPS code, and sets
-        // the value of each variable to 0
-        while(it.hasNext())
-            e.emit("var" + it.next() + ": .word 0");
-        
-        e.emit(".text");
-        e.emit(".global main");
-        e.emit("main:");
+//        Iterator<String> it = program.getVars().iterator();
+//        e.emit("#@author Neil Patel");
+//        e.emit("#@version May 14, 2018");
+//        e.emit(".data");
+//        e.emit("newLine: .asciiz \"\\n\"");
+//        
+//        // Adds the "var" to beginning of each variable name, adds it to the MIPS code, and sets
+//        // the value of each variable to 0
+//        while(it.hasNext())
+//            e.emit("var" + it.next() + ": .word 0");
+//        
+//        e.emit(".text");
+//        e.emit(".globl main");
+//        e.emit("main:");
         program.compile(e);
     }
 }

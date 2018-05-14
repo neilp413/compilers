@@ -50,6 +50,7 @@ public class Variable extends Expression
      * 
      * @param e     the emitter being used to create readable MIPS code
      */
+    @Override
     public void compile(Emitter e)
     {
         e.emit("la $t0, var" + name);

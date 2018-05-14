@@ -129,7 +129,7 @@ public class BinOp extends Expression
                 e.emit("addu $v0, $t0, $v0");
                 break;
             case SUBTRACTION:
-                e.emit("subbu $v0, $t0, $v0");
+                e.emit("subu $v0, $t0, $v0");
                 break;
             case MULTIPLICATION:
                 e.emit("mult $t0, $v0");

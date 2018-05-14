@@ -27,6 +27,6 @@ public abstract class Expression
      */
     public void compile(Emitter e)
     {
-        
+        System.out.println("Placeholder for compiling methods");
     }
 }

@@ -60,14 +60,15 @@ public class Assignment extends Statement
     
     
     /**
-     * Emits lines of code that will change  
+     * Emits lines of code that will change the value of the current variable
      * 
      * @param e     the emitter being used to create readable MIPS code
      */
     public void compile(Emitter e)
     {
         exp.compile(e);
+        e.emit("# Storing into variable var" + var);
         e.emit("la $t0, var" + var);
-        e.emit("lw $v0, ($t0)");
+        e.emit("sw $v0, ($t0)");
     }
 }

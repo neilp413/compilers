@@ -11,7 +11,6 @@ import java.io.*;
 public class Emitter
 {
     private PrintWriter out;
-    private int excess;
     private int labelNum;
 
     /**
@@ -20,7 +19,6 @@ public class Emitter
      * @param outputFileName  the filename
      */	public Emitter(String outputFileName)
      {
-         excess = 0;
          labelNum = 0;
          try
          {
@@ -71,7 +69,6 @@ public class Emitter
        */
       public void emitPop(String reg)
       {
-          excess = excess - 4;
           emit("#pops register " + reg + " onto the stack");
           emit("lw " + reg + ", ($sp)");
           emit("addu $sp, $sp,4");

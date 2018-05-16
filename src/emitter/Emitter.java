@@ -1,6 +1,10 @@
 package emitter;
 
 import java.io.*;
+import java.util.Iterator;
+
+import ast.ProcedureDeclaration;
+import ast.Variable;
 
 /**
  * Creates an emitter 
@@ -11,7 +15,9 @@ import java.io.*;
 public class Emitter
 {
     private PrintWriter out;
+    private ProcedureDeclaration currentPro;
     private int labelNum;
+    private int excessStackHeight;
 
     /**
      * Constructor for the Emitter class
@@ -57,9 +63,10 @@ public class Emitter
        */
       public void emitPush(String reg)
       {
+          excessStackHeight += 4;
           emit("#pushes register " + reg + " onto the stack");
           emit("subu $sp, $sp, 4");
-          emit("sw" + reg +", ($sp)");
+          emit("sw " + reg +", ($sp)");
       }
 
       /**
@@ -69,6 +76,7 @@ public class Emitter
        */
       public void emitPop(String reg)
       {
+          excessStackHeight -= 4;
           emit("#pops register " + reg + " onto the stack");
           emit("lw " + reg + ", ($sp)");
           emit("addu $sp, $sp,4");
@@ -83,5 +91,49 @@ public class Emitter
       {
           labelNum++;
           return labelNum;
+      }
+      
+      //Remembers pro as the current procedure context
+      public void setProcedureContext(ProcedureDeclaration pro)
+      {
+          excessStackHeight = 0;
+          currentPro = pro;
+      }
+      
+      //clear current procedure context (remember null)
+      public void clearProcedureContext()
+      {
+          currentPro = null;
+      }
+      
+      public boolean isLocalVariable(String varName)
+      {
+          //Iterator<Variable> it = currentPro.getParameters().iterator();
+          return (currentPro.getParamNames().indexOf(varName) != -1);
+         /* while(it.hasNext())
+          {
+              String name = it.next().getName();
+              
+              if(varName.equals(name) || varName.equals(currentPro.getName()))
+                  return true;
+          }
+          return false;*/
+      }
+      
+      // precondition: localVarName is the name of a local variable
+      // for the procedure currently being compiled
+      public int getOffset(String localVarName)
+      {
+//          Iterator<Variable> it = currentPro.getParameters().iterator();
+//          int count = 0;
+          
+          return 4 * (currentPro.getParameters().size() - currentPro.getParamNames().indexOf(localVarName)) + excessStackHeight;
+//          while(it.hasNext())
+//          {
+//              if(localVarName.equals(it.next().getName()))
+//                  return 4 * (currentPro.getParameters().size() - count) + excessStackHeight;
+//              count++;
+//          }
+//          return -1;
       }
 }

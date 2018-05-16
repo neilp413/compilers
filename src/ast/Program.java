@@ -21,30 +21,20 @@ public class Program
     private List<String> vars;
 
     /**
-     * The constructor for the Program class that takes in the list of ProcedureDeclarations and
-     * the statment to be executed
+     * The constructor for the Program class \
      * 
      * @param procedures    the list of ProcedureDeclaration to be declared
+     * @param vars  the list of the declared variable names
      * @param stmt          the statement to be executed after declaring the Procedures
      */
-    public Program(List<ProcedureDeclaration> procedures, Statement stmt)
+    public Program(List<ProcedureDeclaration> procedures, List<String> vars, Statement stmt)
     {
         this.procedures = procedures;
+        this.vars = vars;
         this.stmt = stmt;
     }
 
-    /**
-     * The constructor for the Program class (made for converting Pascal to MIPS) 
-     * that takes in the statement to be compiled and the list of declared variable names
-     * 
-     * @param stmt  the statement to be compiled
-     * @param vars  the list of the declared variable names
-     */
-    public Program(Statement stmt, List<String> vars)
-    {
-        this.stmt = stmt;
-        this.vars = vars;
-    }
+
 
     /**
      * Returns the list of variable names
@@ -76,25 +66,30 @@ public class Program
      */
     public void compile(Emitter e)
     {
-        Iterator<String> it = vars.iterator();
+        Iterator<String> itVars = vars.iterator();
+        Iterator<ProcedureDeclaration> itPro = procedures.iterator();
 
-        
+
         e.emit("#@author Neil Patel");
         e.emit("#@version May 14, 2018");
         e.emit(".data");
         e.emit("newLine: .asciiz \"\\n\"");
-        
+
         // Adds the "var" to beginning of each variable name, adds it to the MIPS code, and sets
         // the value of each variable to 0
-        while(it.hasNext())
-            e.emit("var" + it.next() + ": .word 0");
-        
+        while(itVars.hasNext())
+            e.emit("var" + itVars.next() + ": .word 0");
+
         e.emit(".text");
         e.emit(".globl main");
         e.emit("main:");
         stmt.compile(e);
         e.emit("li $v0 10");
         e.emit("syscall");
+        while(itPro.hasNext())
+        {
+            itPro.next().compile(e);
+        }
     }
 
 

@@ -321,6 +321,8 @@ public class Parser
     public Program parseProgram() throws ScanErrorException
     {   
         List<String> vars = new LinkedList<String>();
+        List<ProcedureDeclaration> procedures = new LinkedList<ProcedureDeclaration>();
+
         while(currentToken.equals("VAR"))
         {
             eat("VAR");
@@ -334,10 +336,10 @@ public class Parser
             eat(";");
         }
         
-        List<ProcedureDeclaration> procedures = new LinkedList<ProcedureDeclaration>();
         while(currentToken.equals("PROCEDURE"))
         {
             List<Variable> params = new LinkedList<Variable>();
+            
             eat("PROCEDURE");
             String name = currentToken;
             eat(name);
@@ -353,7 +355,7 @@ public class Parser
             eat(";");
             procedures.add(new ProcedureDeclaration(name, parseStatement(), params));   
         }
-        return new Program(parseStatement(), vars);
+        return new Program(procedures, vars, this.parseStatement());
     }
 
     /**
@@ -370,7 +372,7 @@ public class Parser
     public static void main(String[] args) throws ScanErrorException, FileNotFoundException
     {
         FileInputStream inStream = new FileInputStream(new File(
-                "testers/parserTest9.txt"));
+                "tester/test.txt"));
         Scanner scanner = new Scanner(inStream);
         Parser parser = new Parser(scanner);
         Environment env = new Environment(null);
@@ -392,5 +394,6 @@ public class Parser
 //        e.emit(".globl main");
 //        e.emit("main:");
         program.compile(e);
+        e.close();
     }
 }

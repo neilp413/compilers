@@ -13,7 +13,7 @@ import environment.Environment;
 public class Variable extends Expression
 {
     private String name;
-    
+
     /**
      * The constructor for the Variable class
      * 
@@ -23,7 +23,7 @@ public class Variable extends Expression
     {
         this.name = name;
     }
-    
+
     /**
      * Gets the value of the name of the string
      * 
@@ -44,16 +44,21 @@ public class Variable extends Expression
     {
         return env.getVariable(name);
     }
-    
+
     /**
      * Emits to readable MIPS code that stores the variable name into stack to be used for later
      * 
      * @param e     the emitter being used to create readable MIPS code
      */
-    @Override
     public void compile(Emitter e)
     {
-        e.emit("la $t0, var" + name);
-        e.emit("lw $v0, ($t0)");
+        if(e.isLocalVariable(name))
+        {
+            e.emit("lw $v0, "+ e.getOffset(name) + "($sp)");        }
+        else
+        {
+            e.emit("la $t0, var" + name);
+            e.emit("lw $v0, ($t0)");
+        }
     }
 }

@@ -2,6 +2,7 @@ package ast;
 
 import java.util.*;
 
+import emitter.Emitter;
 import environment.Environment;
 
 /**
@@ -54,5 +55,10 @@ public class ProcedureCall extends Expression
         }
         procedure.getStatement().exec(local);
         return temp.eval(local);
+    }
+    
+    public void compile(Emitter e)
+    {
+        e.emit("jal proc" + name);
     }
 }

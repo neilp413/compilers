@@ -2,6 +2,7 @@ package ast;
 
 import java.util.*;
 
+import emitter.Emitter;
 import environment.Environment;
 
 /**
@@ -17,6 +18,7 @@ public class ProcedureDeclaration extends Statement
     private String name;
     private Statement stmt;
     private List<Variable> params;
+    private List<String> paramNames;
 
     /**
      * The constructor for the ProcedureDeclaration class
@@ -30,6 +32,14 @@ public class ProcedureDeclaration extends Statement
         this.name = name;
         this.stmt = stmt;
         this.params = params;
+        this.paramNames = new LinkedList<String>();
+        
+        Iterator<Variable> it = params.iterator();
+        
+        while(it.hasNext())
+        {
+            paramNames.add(it.next().getName());
+        }
     }
 
     /**
@@ -61,6 +71,11 @@ public class ProcedureDeclaration extends Statement
     {
         return params;
     }
+    
+    public List<String> getParamNames()
+    {
+        return paramNames;
+    }
 
     /**
      * Executes the procedure declaration by setting ProcedureDeclaration in the map 
@@ -70,5 +85,17 @@ public class ProcedureDeclaration extends Statement
     public void exec(Environment env)
     {
         env.setProcedure(name, this);
+    }
+    
+    public void compile(Emitter e)
+    {
+        e.emit("proc" + name + ":");
+        e.emit("li $v0, 0");
+        e.emitPush("$v0");
+        e.emitPush("$ra");
+        stmt.compile(e);
+        e.emitPop("$ra");
+        e.emitPop("$v0");
+        e.emit("jr $ra");
     }
 }

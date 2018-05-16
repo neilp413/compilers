@@ -2,6 +2,8 @@ package emitter;
 
 import java.io.*;
 
+import ast.ProcedureDeclaration;
+
 /**
  * Creates an emitter 
  *
@@ -11,7 +13,11 @@ import java.io.*;
 public class Emitter
 {
     private PrintWriter out;
+    private ProcedureDeclaration current;
+    
     private int labelNum;
+    private int excessStackHeight;
+
 
     /**
      * Constructor for the Emitter class
@@ -57,6 +63,7 @@ public class Emitter
        */
       public void emitPush(String reg)
       {
+          excessStackHeight += 4;
           emit("#pushes register " + reg + " onto the stack");
           emit("subu $sp, $sp, 4");
           emit("sw" + reg +", ($sp)");
@@ -69,6 +76,7 @@ public class Emitter
        */
       public void emitPop(String reg)
       {
+          excessStackHeight -= 4;
           emit("#pops register " + reg + " onto the stack");
           emit("lw " + reg + ", ($sp)");
           emit("addu $sp, $sp,4");
@@ -83,5 +91,28 @@ public class Emitter
       {
           labelNum++;
           return labelNum;
+      }
+      
+      //remember proc as the current procedure context
+      public void setProcedureContext(ProcedureDeclaration proc)
+      {
+          excessStackHeight = 0;
+          current = proc;
+      }
+      
+      //clear current procedure context
+      public void clearProcedureContext()
+      {
+          current = null;
+      }
+      
+      public boolean isLocalVariable(String varName)
+      {
+          return current.getParamNames().indexOf(varName) != -1;
+      }
+      
+      public int getOffset(String localVarName)
+      {
+          return 4 * (current.getParamNames().size() - current.getParamNames().indexOf(localVarName)) + excessStackHeight;
       }
 }

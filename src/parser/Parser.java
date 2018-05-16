@@ -321,6 +321,8 @@ public class Parser
     public Program parseProgram() throws ScanErrorException
     {   
         List<String> vars = new LinkedList<String>();
+        List<ProcedureDeclaration> procedures = new LinkedList<ProcedureDeclaration>();
+
         while(currentToken.equals("VAR"))
         {
             eat("VAR");
@@ -332,12 +334,13 @@ public class Parser
                     eat(",");
             }
             eat(";");
+            
         }
         
-        List<ProcedureDeclaration> procedures = new LinkedList<ProcedureDeclaration>();
         while(currentToken.equals("PROCEDURE"))
         {
             List<Variable> params = new LinkedList<Variable>();
+            
             eat("PROCEDURE");
             String name = currentToken;
             eat(name);
@@ -353,7 +356,7 @@ public class Parser
             eat(";");
             procedures.add(new ProcedureDeclaration(name, parseStatement(), params));   
         }
-        return new Program(parseStatement(), vars);
+        return new Program(procedures, vars, parseStatement());
     }
 
     /**
@@ -370,27 +373,16 @@ public class Parser
     public static void main(String[] args) throws ScanErrorException, FileNotFoundException
     {
         FileInputStream inStream = new FileInputStream(new File(
-                "testers/parserTest9.txt"));
+                "tester/test.txt"));
         Scanner scanner = new Scanner(inStream);
         Parser parser = new Parser(scanner);
         Environment env = new Environment(null);
 //        parser.parseProgram().exec(env);
         Emitter e = new Emitter("testfile.asm");
         Program program = parser.parseProgram();
-//        Iterator<String> it = program.getVars().iterator();
-//        e.emit("#@author Neil Patel");
-//        e.emit("#@version May 14, 2018");
-//        e.emit(".data");
-//        e.emit("newLine: .asciiz \"\\n\"");
-//        
-//        // Adds the "var" to beginning of each variable name, adds it to the MIPS code, and sets
-//        // the value of each variable to 0
-//        while(it.hasNext())
-//            e.emit("var" + it.next() + ": .word 0");
-//        
-//        e.emit(".text");
-//        e.emit(".globl main");
-//        e.emit("main:");
+
+        
         program.compile(e);
+        e.close();
     }
 }

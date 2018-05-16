@@ -92,10 +92,12 @@ public class ProcedureDeclaration extends Statement
         e.emit("proc" + name + ":");
         e.emit("li $v0, 0");
         e.emitPush("$v0");
+        e.setProcedureContext(this);
         e.emitPush("$ra");
         stmt.compile(e);
         e.emitPop("$ra");
         e.emitPop("$v0");
         e.emit("jr $ra");
+        e.clearProcedureContext();
     }
 }

@@ -59,6 +59,13 @@ public class ProcedureCall extends Expression
     
     public void compile(Emitter e)
     {
+        Iterator<Expression> it = params.iterator();
+        
+        while(it.hasNext())
+        {
+            it.next().compile(e);
+            e.emitPush("$v0");
+        }
         e.emit("jal proc" + name);
     }
 }

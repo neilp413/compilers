@@ -16,3 +16,34 @@ main:
 	sw $v0, ($t0)
 	li $v0 10
 	syscall
+procfoo:
+	li $v0, 0
+	#pushes register $v0 onto the stack
+	subu $sp, $sp, 4
+	sw$v0, ($sp)
+	#pushes register $ra onto the stack
+	subu $sp, $sp, 4
+	sw$ra, ($sp)
+	li $v0 1
+	#pushes register $v0 onto the stack
+	subu $sp, $sp, 4
+	sw$v0, ($sp)
+	la $t0, varx
+	lw $v0, ($t0)
+	#pops register $t0 onto the stack
+	lw $t0, ($sp)
+	addu $sp, $sp,4
+	addu $v0, $t0, $v0
+	move $a0 $v0
+	li $v0 1
+	syscall
+	la $a0 newLine
+	li $v0 4
+	syscall
+	#pops register $ra onto the stack
+	lw $ra, ($sp)
+	addu $sp, $sp,4
+	#pops register $v0 onto the stack
+	lw $v0, ($sp)
+	addu $sp, $sp,4
+	jr $ra
